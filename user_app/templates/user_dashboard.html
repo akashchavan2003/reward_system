@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.css">
+</head>
+<body>
+    <body>
+        <div class="container-fluid">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <a class="navbar-brand" href="#">User Dashboard</a>
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <span class="navbar-text">
+                                Logged in as: {{ user.username }}
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            
+            <div class="row mt-4">
+                <!-- Profile Section -->
+                <div class="col-md-4">
+                    <h2>Profile</h2>
+                    <div class="card">
+                        <img src="#" class="card-img-top" alt="Profile Picture">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ user.first_name }}</h5>
+                            <p class="card-text">Email: {{ user.email }}</p>
+                            <p class="card-text">Points Earned: {{ points_earned }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+        <!-- Navbar and Profile Section -->
+        <!-- ... Your existing code ... -->
+
+        <div class="row mt-4">
+            <!-- Available Tasks Section -->
+            <div class="col-md-8">
+                <h2>Available Tasks</h2>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>App</th>
+                            <th>Description</th>
+                            <th>Link to Download</th>
+                            <th>Points</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in available_tasks %}
+                        <tr>
+                            <td>{{ task.app_name }}</td>
+                            <td>{{ task.task_description }}</td>
+                            <td><a href="{{ task.link }}" target="_blank">Download</a></td>
+                            <td>{{ task.points }}</td>
+                            <td>
+                                <!-- Dropzone Form -->
+                                <form action="{% url 'download_action' task.id user.id task.points %}" 
+                                class="dropzone" 
+                                id="task-dropzone-{{ task.id }}"
+                                data-task-id="{{ task.id }}">
+                              {% csrf_token %}
+                              <input type="hidden" name="task_id" value="{{ task.id }}">
+                          </form>
+                          <div id="response-message-{{ task.id }}"></div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center">No available tasks.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <!-- Completed Tasks Section -->
+                <!-- ... Your existing code ... -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+    Dropzone.autoDiscover = false; // Disable auto-discovery
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.dropzone').forEach(function(dropzoneElement) {
+        new Dropzone(dropzoneElement, {
+            acceptedFiles: 'image/*',
+            maxFiles: 1,
+            autoProcessQueue: true,
+            addRemoveLinks: true,
+            success: function(file, response) {
+                // Handle success response
+                console.log('Upload successful:', response);
+                const taskId = dropzoneElement.getAttribute('data-task-id');
+                document.getElementById(`response-message-${taskId}`).innerText = response.success || 'Screenshot uploaded successfully.';
+            },
+            error: function(file, response) {
+                // Handle error response
+                console.error('Upload error:', response);
+                const taskId = dropzoneElement.getAttribute('data-task-id');
+                document.getElementById(`response-message-${taskId}`).innerText = response.error || 'Error uploading screenshot.';
+            },
+        });
+    });
+});
+
+</script>
+</body>
+</html>
