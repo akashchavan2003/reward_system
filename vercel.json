@@ -1,16 +1,20 @@
 {
-    "version": 2,
-    "builds": [
-      {
-        "src": "reward_system/wsgi.py",
-        "use": "@vercel/python"
+  "version": 2,
+  "builds": [
+    {
+      "src": "reward_system/wsgi.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "50mb",
+        "runtime": "python3.9",
+        "buildCommand": "pip install --upgrade -r requirements.txt"
       }
-    ],
-    "routes": [
-      {
-        "src": "/(.*)",
-        "dest": "reward_system/wsgi.py"
-      }
-    ]
-  }
-  
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "reward_system/wsgi.py"
+    }
+  ]
+}
