@@ -77,7 +77,9 @@ WSGI_APPLICATION = 'reward_system.wsgi.application'
 # Database configuration
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgresql://postgres.eorumlluodctuladdvjg:Akashsc@2003@aws-0-ap-south-1.pooler.supabase.com:6543/postgres'
+        default='postgresql://postgres.eorumlluodctuladdvjg:Akashsc@2003@aws-0-ap-south-1.pooler.supabase.com:6543/postgres',
+        conn_max_age=600,
+        ssl_require=True
     )
 }
 
